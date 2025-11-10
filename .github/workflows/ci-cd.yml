@@ -1,0 +1,51 @@
+# Название workflow
+name: CI/CD
+
+# Триггеры запуска:
+on:
+  # Запускать при пуше в ветку main
+  push:
+    branches: [ main ]
+  # Запускать также при создании или обновлении pull request в ветку main
+  pull_request:
+    branches: [ main ]
+
+# Определение задач (jobs)
+jobs:
+  # Задача: тестирование
+  test:
+    # Выполнять на виртуальной машине с Ubuntu
+    runs-on: ubuntu-latest
+    steps:
+      # Шаг 1: Получить код из репозитория
+      - uses: actions/checkout@v4
+
+      # Шаг 2: Установить Python
+      - name: Установить Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      # Шаг 3: Установить зависимости проекта
+      - name: Установить зависимости
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      # Шаг 4: Запустить тесты (заглушка)
+      - name: Запустить тесты (заглушка)
+        run: |
+          python -c "print('Зависимости успешно установлены')"
+          # Сюда позже можно добавить реальные unit-тесты
+
+  # Задача: деплой (развёртывание)
+  deploy:
+    # Эта задача зависит от успешного завершения задачи 'test'
+    needs: test
+    # Выполнять деплой ТОЛЬКО при пуше в ветку main (игнорировать для pull request'ов)
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      # Шаг: пример развёртывания (заглушка)
+      - name: Развернуть на сервере (пример-заглушка)
+        run: echo "Шаг развёртывания"
